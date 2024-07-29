@@ -5,8 +5,8 @@ const app = express()
 
 // Set the bot API endpoint
 export const api = async () => {
-  app.use(await bot.createWebhook({ domain: process.env.API }))
-
+  // app.use(await bot.createWebhook({ domain: process.env.API }))
+  bot.launch()
   app.listen(process.env.PORT, () =>
     console.log('Listening on port', process.env.PORT)
   )

@@ -1,9 +1,10 @@
 import { Context } from 'telegraf'
+import { IUser } from './user.js'
 
-import { User } from '@prisma/client'
+
 
 interface SessionData {
-  user: User | any
+  user: IUser | any
   callbackMessage: string
   language: string
 }
