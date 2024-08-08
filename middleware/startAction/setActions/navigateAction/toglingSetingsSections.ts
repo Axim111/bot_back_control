@@ -7,7 +7,7 @@ import { settingsFreelance } from '../../../../model/settingsFreelance.js'
 import { platform } from 'os'
 
 export const navigatePlatformEnd = async () => {
-  bot.action(/end/, async (ctx) => {
+  bot.action(/end/, async (ctx,) => {
     if (ctx.has(callbackQuery('data'))) {
       const words = ctx.update.callback_query.data.split(/[ ]+/)
       const wordAction = words[0]
@@ -73,7 +73,7 @@ export const navigatePlatformEnd = async () => {
             section: thisSectionSettingsPlatform.section,
           })
 
-          const db = await settingsFreelance.findOneAndUpdate(
+          await settingsFreelance.findOneAndUpdate(
             { login: ctx.from.id },
             { incomingCategory: ctx.session.settings!.incomingCategory },
             { new: true }

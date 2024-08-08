@@ -19,9 +19,13 @@ export const kworkObjectMatch = async (
   const noticeEventDifference = await noticeEvent.insertMany(differenceKwork)
   console.log('pastKworkCase.length', pastKworkCase.length)
   console.log('newKworkCase.length', newKworkCase.length)
-  console.log('noticeEvent.length', noticeEvent.length)
-  await nowCase.insertMany(newKworkCase)
-  await futureCase.deleteMany({})
+  console.log('noticeEvent.length', noticeEventDifference.length)
+  // newKworkCase = newKworkCase.map((item) => {
+  //   delete item._id
+  //   return item
+  // })
+
+
 
   return noticeEventDifference
 }

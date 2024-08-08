@@ -7,10 +7,10 @@ export interface IUser extends Document {
   email: string
   isActiveEmail: boolean
   notice: Boolean
-  noticeState: { noticeFrom: string; noticeSection: string }[]
   createdAt: Schema.Types.Date
   buyMoney: Number
   refUSers: string
   noticeSection: string
   noticeFrom: string
+  
 }

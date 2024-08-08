@@ -12,7 +12,10 @@ import { kwork } from './middleware/startAction/setActions/platformPanel.js'
 import { freeStartScraping } from './service/freeStartScraping.js'
 import { navigatePlatform } from './middleware/startAction/setActions/navigateAction/navigate.js'
 import { navigatePlatformEnd } from './middleware/startAction/setActions/navigateAction/toglingSetingsSections.js'
-
+import { bot } from './connect/bot.js'
+import { noticePlatformAction } from './middleware/serviceMiddlevare/noticePlatformAction.js'
+import { noticeCreateObj } from './service/noticeCreateObj.js'
+await noticePlatformAction()
 await BDConnect()
 await api()
 await start()
@@ -21,7 +24,8 @@ await set()
 await kwork()
 await navigatePlatform()
 await navigatePlatformEnd()
-freeStartScraping()
+await noticeCreateObj()
+await freeStartScraping()
 
 // console.log((await kworkCase.find({})).length)
 // console.log(await User.find({}).limit(10))

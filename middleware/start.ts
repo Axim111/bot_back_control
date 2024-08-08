@@ -15,7 +15,6 @@ export const start = async () => {
         [Markup.button.callback('about the bot', 'about')],
       ])
     )
-  
   })
   bot.action('start', async (ctx) => {
     const text = `start`

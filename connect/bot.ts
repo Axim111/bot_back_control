@@ -14,7 +14,8 @@ bot.use(
       platform: 'init',
       navigateOptions: [],
       lastNavigation: null,
-      actionRout:{endSectionBackWord:""}
+      actionRout:{endSectionBackWord:""},
+      objectNotice:[]
     }),
   })
 )

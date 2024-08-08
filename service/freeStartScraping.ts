@@ -1,13 +1,13 @@
 import { CronJob } from 'cron'
 import cron from 'cron'
 import { kworkMainScraping } from './kwork/kworkMainScrapingAndCreateNav.js'
-import { notice } from './notice.js'
-export const freeStartScraping = () => {
+import { noticeCreateObj } from './noticeCreateObj.js'
+export const freeStartScraping = async () => {
   const job = new CronJob(
-    '13 4 * * *',
+    '19 4 * * *',
     async () => {
       await kworkMainScraping()
-      notice()
+      noticeCreateObj()
     },
     null,
     true,

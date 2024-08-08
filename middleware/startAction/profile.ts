@@ -4,6 +4,7 @@ import { IMyContext } from '../../type/session.js'
 
 export const profile = async () => {
   bot.action('profile', async (ctx) => {
+    
     if (ctx.session) {
       const text = `
       profile:

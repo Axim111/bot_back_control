@@ -23,7 +23,8 @@ export const kworkMainScraping = async () => {
     const browser = await puppeteer.launch({
       headless: false,
       timeout: 0,
-      // args: ['--proxy-server=socks5://65.169.38.73:26592'],
+      // args: ['--proxy-server=socks5://152.67.208.80:57048'],
+
       ignoreHTTPSErrors: true,
     })
     const page = await browser.newPage()
@@ -46,7 +47,7 @@ export const kworkMainScraping = async () => {
         platform: 'kwork',
         back: 'this',
         text: category,
-        nextEnd:false,
+        nextEnd: false,
         end: false,
       }
       categories.push(categoryInsert)
@@ -70,7 +71,7 @@ export const kworkMainScraping = async () => {
           platform: 'kwork',
           back: category,
           text: sub,
-          nextEnd:true,
+          nextEnd: true,
           end: false,
         }
         subs.push(subInsert)
@@ -92,7 +93,7 @@ export const kworkMainScraping = async () => {
             platform: 'kwork',
             back: sub,
             text: subsub,
-            nextEnd:true,
+            nextEnd: true,
             end: true,
           }
           subsubs.push(subsubInsert)
@@ -101,12 +102,15 @@ export const kworkMainScraping = async () => {
       }
     }
 
-    const pastnowCase = await nowCase.find({})
+    const pastCase = await nowCase.find({})
 
-    const newnowCase = await futureCase.find({})
+    const newCase = await futureCase.find({})
+    await nowCase.deleteMany({})
+    await nowCase.insertMany(newCase)
+    await futureCase.deleteMany({})
     await navigate.deleteMany({})
     await navigate.insertMany([...categories, ...subs, ...subsubs])
-    await kworkObjectMatch(pastnowCase, newnowCase)
+    await kworkObjectMatch(pastCase, newCase)
     await browser.close()
   } catch (e) {
     console.log(e)
