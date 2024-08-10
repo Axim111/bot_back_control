@@ -2,7 +2,7 @@ import { Context } from 'telegraf'
 import { IUser } from './model/user.js'
 import { ISettingsType } from './model/settingsType.js'
 import { INavigation, INavigationDocument } from './model/navigationType.js'
-import { IUserMessages } from './userMessages.js'
+import { IMessage, IUserMessages } from './userMessages.js'
 
 interface SessionData {
   user: IUser | any
@@ -12,8 +12,9 @@ interface SessionData {
   navigateOptions: INavigationDocument[]
   lastNavigation: INavigation | null
   actionRout:{endSectionBackWord:string}
-  
   objectNotice:IUserMessages[]
+  noticePaginationList:IMessage[][]|null
+  noticeThisMenuPaginationItem:IMessage[]|null
 
 }
 

@@ -20,17 +20,18 @@ export const noticeCreateObj = async () => {
 
     for (let noticeItem of noticeItems) {
       // await noticeItems.forEach(async (noticeItem) => {
-      let messageContent = `
-          ${noticeItem.title}
-      
-          ${noticeItem.mainTextFull}
+      let messageContent = {
+        title: noticeItem.title,
 
-          ${noticeItem.section}
-             
-          ${noticeItem.price}
-          
-          ${noticeItem.from}
-          `
+        mainTextFull: noticeItem.mainTextFull,
+
+        section: noticeItem.section,
+
+        price: noticeItem.price,
+
+        from: noticeItem.from,
+      }
+
       let createdUserMessagesByLogin = userMessages.find(
         (item) => item.userLogin === user.login
       )
@@ -57,17 +58,21 @@ export const noticeCreateObj = async () => {
           const createdUserMessageObjectByPlatform =
             createdUserMessagesByLogin.messagesAndPlatform.find(
               (platformMessage) => {
-                platformMessage.platform === noticeItem.from
+                return platformMessage.platform === noticeItem.from
               }
             )
+
           if (createdUserMessageObjectByPlatform) {
             //если есть площадка
+
             createdUserMessageObjectByPlatform.messages.push(messageContent)
             createdUserMessagesByLogin.messagesAndPlatform =
               createdUserMessagesByLogin.messagesAndPlatform.filter(
-                (messagesAndPlatformItem) =>
-                  messagesAndPlatformItem.platform !== noticeItem.from
+                (messagesAndPlatformItem) => {
+                  return messagesAndPlatformItem.platform !== noticeItem.from
+                }
               )
+
             createdUserMessagesByLogin.messagesAndPlatform.push(
               createdUserMessageObjectByPlatform
             )
@@ -77,6 +82,7 @@ export const noticeCreateObj = async () => {
               messages: [messageContent],
             })
           }
+
           userMessages = userMessages.filter(
             (user) => user.userLogin !== user.userLogin
           )
@@ -91,11 +97,11 @@ export const noticeCreateObj = async () => {
         }
       }
     }
+    if (userMessages.length !== 0) {
+      notice(userMessages)
+      await redisClient.set('userMessages', JSON.stringify(userMessages))
+    }
 
-  
-
-    notice(userMessages)
-    await redisClient.set("userMessages", JSON.stringify(user))
     // await userMessagesNotice.insertMany(userMessages)
   }
 }

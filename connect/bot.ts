@@ -15,7 +15,10 @@ bot.use(
       navigateOptions: [],
       lastNavigation: null,
       actionRout:{endSectionBackWord:""},
-      objectNotice:[]
+      objectNotice:[],
+
+      noticePaginationList:null,
+      noticeThisMenuPaginationItem:null,
     }),
   })
 )

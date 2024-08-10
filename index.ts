@@ -13,9 +13,12 @@ import { freeStartScraping } from './service/freeStartScraping.js'
 import { navigatePlatform } from './middleware/startAction/setActions/navigateAction/navigate.js'
 import { navigatePlatformEnd } from './middleware/startAction/setActions/navigateAction/toglingSetingsSections.js'
 import { bot } from './connect/bot.js'
-import { noticePlatformAction } from './middleware/serviceMiddlevare/noticePlatformAction.js'
+import { enterNoticePlatform } from './middleware/NoticeServiceMiddlevare/enterNoticePlatform.js'
 import { noticeCreateObj } from './service/noticeCreateObj.js'
-await noticePlatformAction()
+import { showNotice } from './middleware/NoticeServiceMiddlevare/noticeShow.js'
+import { startNoticePlatform } from './middleware/NoticeServiceMiddlevare/startNoticePlatform.js'
+import { noticePagination } from './middleware/NoticeServiceMiddlevare/noticePagination.js'
+await enterNoticePlatform()
 await BDConnect()
 await api()
 await start()
@@ -26,6 +29,8 @@ await navigatePlatform()
 await navigatePlatformEnd()
 await noticeCreateObj()
 await freeStartScraping()
-
+await showNotice()
+await startNoticePlatform()
+await noticePagination()
 // console.log((await kworkCase.find({})).length)
 // console.log(await User.find({}).limit(10))

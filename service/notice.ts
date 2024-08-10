@@ -18,16 +18,14 @@ export const notice = async (userMessages: IUserMessages[]) => {
           acc.push([
             Markup.button.callback(
               message.platform,
-              'platformNotice' + ' ' + message.platform
+              'enterPlatform' + ' ' + message.platform
             ),
           ])
           return acc
         },
         [] as InlineKeyboardButton[][]
       )
-
-      console.log(inline_keyboard_list)
-      bot.telegram.sendMessage(userMessage.userLogin, 'notice', {
+      bot.telegram.sendMessage(userMessage.userLogin, 'start notice platform', {
         reply_markup: { inline_keyboard: inline_keyboard_list },
       })
     }, indexUserMessage * 50)
