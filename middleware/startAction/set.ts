@@ -14,10 +14,7 @@ export const set = async () => {
     const markProfile = [
       [
         Markup.button.callback(addEmojiByStatus('kwork'), 'platformItem kwork'),
-        Markup.button.callback(
-          addEmojiByStatus('telegram'),
-          'platformItem telegram'
-        ),
+        Markup.button.callback(addEmojiByStatus('habr'), 'platformItem habr'),
       ],
       [Markup.button.callback('back to start', 'start')],
     ]

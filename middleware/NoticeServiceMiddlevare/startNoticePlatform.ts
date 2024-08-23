@@ -6,21 +6,27 @@ import { callbackQuery } from 'telegraf/filters'
 import { InlineKeyboardButton } from '@telegraf/types'
 import { redisClient } from '../../connect/redis.js'
 import { IUserMessages } from '../../type/userMessages.js'
+import { messageTransport } from '../../model/messageTransport.js'
 export const startNoticePlatform = async () => {
   bot.action(/startPlatform/, async (ctx) => {
+    console.log(1)
     if (ctx.has(callbackQuery('data'))) {
       const words = ctx.update.callback_query.data.split(/[ ]+/)
 
       let inline_keyboard_list: InlineKeyboardButton[][] = []
-      const userMessageList: IUserMessages[] = JSON.parse(
-        (await redisClient.get('userMessages')) || ''
-      )
-      const userMessage = userMessageList.find(
-        (userMessageItem) =>
-          userMessageItem.userLogin === ctx.from.id.toString()
-      )!
+      // const userMessageList: IUserMessages[] = JSON.parse(
+      //   (await redisClient.get('userMessages')) || ''
+      // )
 
-      inline_keyboard_list = userMessage.messagesAndPlatform.reduce(
+      // const userMessage = userMessageList.find(
+      //   (userMessageItem) =>
+      //     userMessageItem.userLogin === ctx.from.id.toString()
+      // )!
+      const userMessage: IUserMessages | null = await messageTransport.findOne({
+        userLogin: ctx.session.user.login,
+      })
+
+      inline_keyboard_list = userMessage!.messagesAndPlatform.reduce(
         (acc, message) => {
           acc.push([
             Markup.button.callback(

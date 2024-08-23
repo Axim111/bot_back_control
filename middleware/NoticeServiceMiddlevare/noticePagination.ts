@@ -40,16 +40,18 @@ export const noticePagination = async () => {
 
       if (noticePaginationList.length <= 6) {
         // логика всё вместится
-        for (let indexButton in noticePaginationList) {
-          let indexButtonVisibleIndex = +indexButton + 1
-          let itemMarkup = Markup.button.callback(
-            styleCurrent(current, +indexButtonVisibleIndex),
-            'pagination ' +
-              wordPlatform +
-              ' ' +
-              (+indexButtonVisibleIndex).toString()
-          )
-          listButtonPagination.push(itemMarkup)
+        if (noticePaginationList.length !== 1) {
+          for (let indexButton in noticePaginationList) {
+            let indexButtonVisibleIndex = +indexButton + 1
+            let itemMarkup = Markup.button.callback(
+              styleCurrent(current, +indexButtonVisibleIndex),
+              'pagination ' +
+                wordPlatform +
+                ' ' +
+                (+indexButtonVisibleIndex).toString()
+            )
+            listButtonPagination.push(itemMarkup)
+          }
         }
       } else {
         //логика многоточий...
@@ -60,6 +62,7 @@ export const noticePagination = async () => {
             'pagination ' + wordPlatform + ' ' + '1'
           )
         )
+
         let indexButtonVisibleIndex = current - 2
         for (
           indexButtonVisibleIndex;

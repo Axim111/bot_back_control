@@ -1,6 +1,6 @@
 import { bot } from '../../connect/bot.js'
 import { Context, Markup } from 'telegraf'
-import { IMyContext } from '../../type/session.js'
+
 import puppeteer from 'puppeteer'
 import { it } from 'node:test'
 import { match } from 'node:assert'
@@ -39,6 +39,9 @@ export const kworkCards = async (page: puppeteer.Page, subsub: string) => {
         await textBlockButton.$eval('.kw-link-dashed', (el) =>
           (<HTMLElement>el).click()
         )
+        const textBlockButton1 = await card.$(
+          '.d-inline .breakwords .first-letter'
+        )
 
         const mainTextFullRow = await card.evaluate(
           (node) => node.textContent || ' '
@@ -63,6 +66,7 @@ export const kworkCards = async (page: puppeteer.Page, subsub: string) => {
     await cardSearch()
     pageDown = await page.$('.pagination__arrow--next')
     if (pageDown) {
+      await new Promise((resolve) => setTimeout(resolve, 3000))
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         pageDown.evaluate((node) => {

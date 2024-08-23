@@ -8,11 +8,13 @@ import { IWorkCase } from '../../type/model/workCase.js'
 import { nowCase } from '../../model/nowCase.js'
 import { futureCase } from '../../model/futureCase.js'
 import { kworkCards } from './kworkCardsScraping.js'
-import { kworkObjectMatch } from './kworkNoticeMatchNClearCase.js'
+import { workObjectMatch } from '../workNoticeMatchNClearCase.js'
 import { navigate } from '../../model/navigate.js'
 import { INavigation } from '../../type/model/navigationType.js'
+import { navigateFuture } from '../../model/navigateFuture.js'
+import { noticeEvent } from '../../model/notice.js'
 //main script который собирает {1: парсер объекта навигации, 2: подключает парсер карточек, 3: вызывает логику сравнения объектов для нотификации }
-export const kworkMainScraping = async () => {
+export const kworkMainScraping = async (kworkPastCase: IWorkCase[]) => {
   try {
     let categories: INavigation[] = []
     let subs: INavigation[] = [] //{ category: string; sub: string }[]
@@ -24,8 +26,6 @@ export const kworkMainScraping = async () => {
       headless: false,
       timeout: 0,
       // args: ['--proxy-server=socks5://152.67.208.80:57048'],
-
-      ignoreHTTPSErrors: true,
     })
     const page = await browser.newPage()
 
@@ -98,19 +98,21 @@ export const kworkMainScraping = async () => {
           }
           subsubs.push(subsubInsert)
           await kworkCards(page, subsub) // search card for subsub + pagination
+          await new Promise((resolve) => setTimeout(resolve, 3000))
         }
       }
     }
 
-    const pastCase = await nowCase.find({})
+    // const pastCase = await nowCase.find({})
+    const pastCase = kworkPastCase
 
     const newCase = await futureCase.find({})
-    await nowCase.deleteMany({})
+    await futureCase.deleteMany()
     await nowCase.insertMany(newCase)
-    await futureCase.deleteMany({})
-    await navigate.deleteMany({})
-    await navigate.insertMany([...categories, ...subs, ...subsubs])
-    await kworkObjectMatch(pastCase, newCase)
+
+    await navigateFuture.insertMany([...categories, ...subs, ...subsubs])
+    await noticeEvent.deleteMany({ from: 'kwork' })
+    await workObjectMatch(pastCase, newCase)
     await browser.close()
   } catch (e) {
     console.log(e)

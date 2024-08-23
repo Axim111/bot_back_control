@@ -7,7 +7,7 @@ import { settingsFreelance } from '../../../../model/settingsFreelance.js'
 import { platform } from 'os'
 
 export const navigatePlatformEnd = async () => {
-  bot.action(/end/, async (ctx,) => {
+  bot.action(/end/, async (ctx) => {
     if (ctx.has(callbackQuery('data'))) {
       const words = ctx.update.callback_query.data.split(/[ ]+/)
       const wordAction = words[0]
@@ -29,10 +29,15 @@ export const navigatePlatformEnd = async () => {
             new RegExp(`${ctx.session.actionRout.endSectionBackWord}`, 'i')
           )
       )
+
+      //console.log(ctx.session.settings!.incomingCategory) // обязательно добавить новую платформу в common/freelance
       let thisSectionSettingsPlatform =
         ctx.session.settings!.incomingCategory.filter(
           (item) => item.platform === wordPlatform
         )[0]
+
+      if (thisSectionSettingsPlatform) {
+      }
 
       if (wordAction === 'endUp') {
         const isInSettingsSection = thisSectionSettingsPlatform.section.some(

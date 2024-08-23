@@ -17,19 +17,27 @@ export const showNotice = async () => {
         )
       const text = `thisNotice
 
+      section: ${thisMessageStructureItem?.section}
+
+
       title: ${thisMessageStructureItem?.title}
 
-      section: ${thisMessageStructureItem?.section}
 
       mainTextFull: ${thisMessageStructureItem?.mainTextFull}
 
+           
+
       price: ${thisMessageStructureItem?.price}
+
+      refCase: ${thisMessageStructureItem?.refCase}
+
+      from: ${thisMessageStructureItem?.from}
       `
       const markShow = [
         [
           Markup.button.callback(
             `back to ${wordPaginationNumber}`,
-            'pagination ' + wordPlatform+' '+wordPaginationNumber
+            'pagination ' + wordPlatform + ' ' + wordPaginationNumber
           ),
         ],
       ]

@@ -14,6 +14,6 @@ const userSchema = new Schema<IUser>({
  
 
   createdAt: { type: Date, default: Date.now },
-  refUSers: { type: String, ref: 'User' },
+  keyWord:{ type: String},
 })
 export const User = mongoose.model('User', userSchema)

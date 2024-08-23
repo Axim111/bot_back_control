@@ -9,8 +9,8 @@ export interface IUser extends Document {
   notice: Boolean
   createdAt: Schema.Types.Date
   buyMoney: Number
-  refUSers: string
   noticeSection: string
   noticeFrom: string
+  keyWord:string
   
 }

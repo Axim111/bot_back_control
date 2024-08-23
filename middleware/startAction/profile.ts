@@ -4,18 +4,15 @@ import { IMyContext } from '../../type/session.js'
 
 export const profile = async () => {
   bot.action('profile', async (ctx) => {
-    
-    if (ctx.session) {
-      const text = `
+    const text = `
       profile:
       id: ${ctx.session.user?.login}
       username: ${ctx.session.user?.username}
       `
-      const markProfile = [[Markup.button.callback('back to start', 'start')]]
+    const markProfile = [[Markup.button.callback('back to start', 'start')]]
 
-      await ctx.editMessageText(text, {
-        reply_markup: { inline_keyboard: markProfile },
-      })
-    }
+    await ctx.editMessageText(text, {
+      reply_markup: { inline_keyboard: markProfile },
+    })
   })
 }

@@ -4,22 +4,24 @@ import { bot } from '../../connect/bot.js'
 import { redisClient } from '../../connect/redis.js'
 import { IMessage, IUserMessages } from '../../type/userMessages.js'
 import { InlineKeyboardButton } from '@telegraf/types'
+import { messageTransport } from '../../model/messageTransport.js'
 
 export const enterNoticePlatform = async () => {
   bot.action(/enterPlatform/, async (ctx) => {
     if (ctx.has(callbackQuery('data'))) {
       const words = ctx.update.callback_query.data.split(/[ ]+/)
       const wordPlatform = words[1]
-      const noticeMessage: IUserMessages[] | '' = JSON.parse(
-        (await redisClient.get('userMessages')) || ''
-      )
+      const noticeMessageByUSer: IUserMessages | null =
+        await messageTransport.findOne({ userLogin: ctx.session.user.login })
 
-      if (noticeMessage) {
-        const noticeByUSer = noticeMessage.find(
-          (userMessageItem) =>
-            userMessageItem.userLogin === ctx.session.user.login
-        )
-        const noticeByPlatform = noticeByUSer!.messagesAndPlatform.find(
+      // console.log(noticeMessageByUSer)
+
+      // const noticeMessage: IUserMessages[] | '' = JSON.parse(
+      //   (await redisClient.get('userMessages')) || ''
+      // )
+      
+      if (noticeMessageByUSer) {
+        const noticeByPlatform = noticeMessageByUSer!.messagesAndPlatform.find(
           (userMessagesAndPlatformItem) =>
             userMessagesAndPlatformItem.platform === wordPlatform
         )!.messages
@@ -41,7 +43,7 @@ export const enterNoticePlatform = async () => {
           }
         })
         ctx.session.noticePaginationList = noticePaginationList
-        const current = 3
+        const current = 1
         const markSettings = noticePaginationList[current - 1].reduce(
           (listButtonCase, buttonCase) => {
             listButtonCase.push([
@@ -72,16 +74,18 @@ export const enterNoticePlatform = async () => {
 
         if (noticePaginationList.length <= 6) {
           // логика всё вместится
-          for (let indexButton in noticePaginationList) {
-            let indexButtonVisibleIndex = +indexButton + 1
-            let itemMarkup = Markup.button.callback(
-              styleCurrent(current, +indexButtonVisibleIndex),
-              'pagination ' +
-                wordPlatform +
-                ' ' +
-                (+indexButtonVisibleIndex).toString()
-            )
-            listButtonPagination.push(itemMarkup)
+          if (noticePaginationList.length !== 1) {
+            for (let indexButton in noticePaginationList) {
+              let indexButtonVisibleIndex = +indexButton + 1
+              let itemMarkup = Markup.button.callback(
+                styleCurrent(current, +indexButtonVisibleIndex),
+                'pagination ' +
+                  wordPlatform +
+                  ' ' +
+                  (+indexButtonVisibleIndex).toString()
+              )
+              listButtonPagination.push(itemMarkup)
+            }
           }
         } else {
           //логика многоточий...
@@ -92,6 +96,7 @@ export const enterNoticePlatform = async () => {
               'pagination ' + wordPlatform + ' ' + '1'
             )
           )
+
           let indexButtonVisibleIndex = current - 2
           for (
             indexButtonVisibleIndex;
@@ -135,7 +140,6 @@ export const enterNoticePlatform = async () => {
         // ])
         ctx.session.noticeThisMenuPaginationItem =
           noticePaginationList[current - 1] // то, где show будет искать
-
         const markPagination = noticePaginationList
         const text = `notice pagination`
         await ctx.editMessageText(text, {

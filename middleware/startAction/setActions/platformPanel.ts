@@ -46,15 +46,15 @@ export const kwork = async () => {
         [
           Markup.button.callback(
             'navigate platform',
-            'navigate ' + wordPlatform+" this"
+            'navigate ' + wordPlatform + ' this'
           ),
         ],
 
         ctx.session.settings!.platform.includes(wordPlatform)
-          ? [Markup.button.callback('turn off', 'disable ' + wordPlatform)]
-          : [Markup.button.callback('turn on', 'enable ' + wordPlatform)],
+          ? [Markup.button.callback('выключить', 'disable ' + wordPlatform)]
+          : [Markup.button.callback('включить', 'enable ' + wordPlatform)],
 
-        [Markup.button.callback('back to settings', 'settings')],
+        [Markup.button.callback('к началу', 'settings')],
       ]
 
       await ctx.editMessageText(text, {

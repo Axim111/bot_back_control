@@ -4,104 +4,32 @@ import { noticeEvent } from '../model/notice.js'
 import { Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
 import { IUserMessages } from '../type/userMessages.js'
-import { notice } from './notice.js'
+import { noticeStart } from './noticeStart.js'
 import { settingsFreelance } from '../model/settingsFreelance.js'
 import { userMessagesNotice } from '../model/userMessages.js'
 import { bot } from '../connect/bot.js'
 import { redisClient } from '../connect/redis.js'
+import { messageTransport } from '../model/messageTransport.js'
+import { IUser } from '../type/model/user.js'
+import { calculationNotice } from './calculationNotice.js'
 
 export const noticeCreateObj = async () => {
   const users = await User.find({ notice: true })
-  const noticeItems = await noticeEvent.find({})
+  
 
   let userMessages: IUserMessages[] = []
+
   for (let user of users) {
     // await users.forEach(async (user) => {
-
-    for (let noticeItem of noticeItems) {
-      // await noticeItems.forEach(async (noticeItem) => {
-      let messageContent = {
-        title: noticeItem.title,
-
-        mainTextFull: noticeItem.mainTextFull,
-
-        section: noticeItem.section,
-
-        price: noticeItem.price,
-
-        from: noticeItem.from,
-      }
-
-      let createdUserMessagesByLogin = userMessages.find(
-        (item) => item.userLogin === user.login
-      )
-
-      const settingsUserByLogin = await settingsFreelance.findOne({
-        login: user.login,
-      }) //поиск платформы
-      const isUserSubscribePlatform = settingsUserByLogin?.platform.some(
-        (userItemPlatform) => userItemPlatform === noticeItem.from
-      )
-      const findSectionListByPlatform =
-        settingsUserByLogin!.incomingCategory.find(
-          (settingsObjectSectionSubscribe) =>
-            settingsObjectSectionSubscribe.platform === noticeItem.from
-        ) //поиск секции
-
-      const isUserSubscribeSection = findSectionListByPlatform!.section.some(
-        (section) => section === noticeItem.section
-      )
-
-      if (isUserSubscribePlatform && isUserSubscribeSection) {
-        // если человек подписан на сообщение, то создаём объект нотиса
-        if (createdUserMessagesByLogin) {
-          const createdUserMessageObjectByPlatform =
-            createdUserMessagesByLogin.messagesAndPlatform.find(
-              (platformMessage) => {
-                return platformMessage.platform === noticeItem.from
-              }
-            )
-
-          if (createdUserMessageObjectByPlatform) {
-            //если есть площадка
-
-            createdUserMessageObjectByPlatform.messages.push(messageContent)
-            createdUserMessagesByLogin.messagesAndPlatform =
-              createdUserMessagesByLogin.messagesAndPlatform.filter(
-                (messagesAndPlatformItem) => {
-                  return messagesAndPlatformItem.platform !== noticeItem.from
-                }
-              )
-
-            createdUserMessagesByLogin.messagesAndPlatform.push(
-              createdUserMessageObjectByPlatform
-            )
-          } else {
-            createdUserMessagesByLogin.messagesAndPlatform.push({
-              platform: noticeItem.from,
-              messages: [messageContent],
-            })
-          }
-
-          userMessages = userMessages.filter(
-            (user) => user.userLogin !== user.userLogin
-          )
-          userMessages.push(createdUserMessagesByLogin)
-        } else {
-          userMessages.push({
-            userLogin: user.login,
-            messagesAndPlatform: [
-              { platform: noticeItem.from, messages: [messageContent] },
-            ],
-          })
-        }
-      }
+      userMessages = await calculationNotice(user, userMessages)
+     
     }
     if (userMessages.length !== 0) {
-      notice(userMessages)
-      await redisClient.set('userMessages', JSON.stringify(userMessages))
-    }
-
+      await messageTransport.deleteMany({})
+     const times = await messageTransport.insertMany(userMessages)
+    //  await redisClient.set('userMessages', JSON.stringify(userMessages))
+      
+    noticeStart(userMessages)
     // await userMessagesNotice.insertMany(userMessages)
   }
 }

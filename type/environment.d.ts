@@ -7,6 +7,9 @@ declare global {
       API: string
       PORT: string
       DATABASE_URL: string
+      STRING_session: string
+      apiId: number
+      apiHash: string
     }
   }
 }

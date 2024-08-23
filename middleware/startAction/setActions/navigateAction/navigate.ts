@@ -29,8 +29,6 @@ export const navigatePlatform = async () => {
         (item) => item.back == backText
       )
 
-      let backInitText: string
-
       navigateInCategoryCases.forEach((item) => {
         let textActionCallback =
           item.text.length <= 20 ? item.text : item.text.slice(0, 20)

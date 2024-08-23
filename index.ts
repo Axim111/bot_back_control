@@ -18,6 +18,13 @@ import { noticeCreateObj } from './service/noticeCreateObj.js'
 import { showNotice } from './middleware/NoticeServiceMiddlevare/noticeShow.js'
 import { startNoticePlatform } from './middleware/NoticeServiceMiddlevare/startNoticePlatform.js'
 import { noticePagination } from './middleware/NoticeServiceMiddlevare/noticePagination.js'
+import { telegramMain } from './service/telegram/telegramMain.js'
+import { habrMainScraping } from './service/habr/mainParser.js'
+import { pushUser } from './middleware/startAction/pushNoticeUser.js'
+import { keyWord } from './middleware/startAction/keyWord.js'
+import { editKeyWord } from './middleware/startAction/editAction/editKeyWord.js'
+import { clearKeyWord } from './middleware/startAction/editAction/clearKeyWord.js'
+import { about } from './middleware/startAction/about.js'
 await enterNoticePlatform()
 await BDConnect()
 await api()
@@ -27,10 +34,17 @@ await set()
 await kwork()
 await navigatePlatform()
 await navigatePlatformEnd()
-await noticeCreateObj()
+
 await freeStartScraping()
 await showNotice()
 await startNoticePlatform()
 await noticePagination()
+await pushUser()
+await keyWord()
+await editKeyWord()
+await clearKeyWord()
+await about()
+// await telegramMain()
+// await noticeCreateObj()
 // console.log((await kworkCase.find({})).length)
 // console.log(await User.find({}).limit(10))

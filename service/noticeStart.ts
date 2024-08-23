@@ -7,7 +7,7 @@ import { IUserMessages } from '../type/userMessages.js'
 import { InlineKeyboardButton } from '@telegraf/types'
 import { bot } from '../connect/bot.js'
 
-export const notice = async (userMessages: IUserMessages[]) => {
+export const noticeStart = async (userMessages: IUserMessages[]) => {
   // bot.telegram.sendMessage(user.login, messageContent)
   let inline_keyboard_list: InlineKeyboardButton[][] = []
 
