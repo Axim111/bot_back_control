@@ -6,13 +6,18 @@ import { callbackQuery, message } from 'telegraf/filters'
 import { IUserMessages } from '../type/userMessages.js'
 import { InlineKeyboardButton } from '@telegraf/types'
 import { bot } from '../connect/bot.js'
+import { errors } from 'telegram'
+import { settingsFreelance } from '../model/settingsFreelance.js'
+import { redisClient } from '../connect/redis.js'
 
 export const noticeStart = async (userMessages: IUserMessages[]) => {
   // bot.telegram.sendMessage(user.login, messageContent)
   let inline_keyboard_list: InlineKeyboardButton[][] = []
-
-  userMessages.forEach((userMessage, indexUserMessage) => {
-    setTimeout(() => {
+  let indexUserMessage = 0
+  // userMessages.forEach((userMessage, indexUserMessage) => {
+  for (let userMessage of userMessages) {
+    indexUserMessage += 1
+    setTimeout(async () => {
       inline_keyboard_list = userMessage.messagesAndPlatform.reduce(
         (acc, message) => {
           acc.push([
@@ -25,10 +30,33 @@ export const noticeStart = async (userMessages: IUserMessages[]) => {
         },
         [] as InlineKeyboardButton[][]
       )
-      bot.telegram.sendMessage(userMessage.userLogin, 'start notice platform', {
-        reply_markup: { inline_keyboard: inline_keyboard_list },
-      })
+      // console.log(inline_keyboard_list)
+      try {
+        await bot.telegram.sendMessage(
+          userMessage.userLogin,
+          'кейсы',
+          {
+            reply_markup: { inline_keyboard: inline_keyboard_list },
+          }
+        )
+      } catch (err: any) {
+        console.log(err)
+        if ('response' in err) {
+          if ('error_code' in err.response)
+            if (err.response.error_code === 403) {
+              try {
+                await User.deleteOne({ login: userMessage.userLogin })
+                await settingsFreelance.deleteOne({
+                  login: userMessage.userLogin,
+                })
+                await redisClient.del(userMessage.userLogin)
+              } catch (err) {
+                console.log(err)
+              }
+            }
+        }
+      }
     }, indexUserMessage * 50)
     inline_keyboard_list = []
-  })
+  }
 }

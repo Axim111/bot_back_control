@@ -14,23 +14,24 @@ import { IUser } from '../type/model/user.js'
 import { calculationNotice } from './calculationNotice.js'
 
 export const noticeCreateObj = async () => {
-  const users = await User.find({ notice: true })
-  
+  try {
+    const users = await User.find({ notice: true })
 
-  let userMessages: IUserMessages[] = []
+    let userMessages: IUserMessages[] = []
 
-  for (let user of users) {
-    // await users.forEach(async (user) => {
+    for (let user of users) {
+      // await users.forEach(async (user) => {
       userMessages = await calculationNotice(user, userMessages)
-     
     }
     if (userMessages.length !== 0) {
       await messageTransport.deleteMany({})
-     const times = await messageTransport.insertMany(userMessages)
-    //  await redisClient.set('userMessages', JSON.stringify(userMessages))
-      
-    noticeStart(userMessages)
-    // await userMessagesNotice.insertMany(userMessages)
+      const times = await messageTransport.insertMany(userMessages)
+      //  await redisClient.set('userMessages', JSON.stringify(userMessages))
+      await noticeStart(userMessages)
+      // await userMessagesNotice.insertMany(userMessages)
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
 

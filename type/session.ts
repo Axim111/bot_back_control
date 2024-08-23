@@ -4,12 +4,9 @@ import { ISettingsType } from './model/settingsType.js'
 import { INavigation, INavigationDocument } from './model/navigationType.js'
 import { IMessage, IUserMessages } from './userMessages.js'
 
-
-
-interface MyWizardSession extends Scenes.WizardSessionData  {
+interface MyWizardSession extends Scenes.WizardSessionData {
   // will be available under `ctx.scene.session.myWizardSessionProp`
   keyWordType: string
-
 }
 interface sessionDate extends Scenes.WizardSession<MyWizardSession> {
   user: IUser | any

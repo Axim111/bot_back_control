@@ -18,44 +18,52 @@ export const start = async () => {
           'start changeNotice'
         ),
       ],
-      [Markup.button.callback('получить кейс', 'push')],
-      [Markup.button.callback('key word', 'keyWord')],
+      [Markup.button.callback('получить кейсы', 'push')],
+      [Markup.button.callback('ключевые слова', 'keyWord')],
       [Markup.button.callback('о боте', 'about')],
     ]
     return markForStart
   }
 
   bot.start(async (ctx) => {
-    await initUser(ctx)
-    await initFreelance(ctx)
+    try {
+      await initUser(ctx)
+      await initFreelance(ctx)
 
-    await ctx.reply('start', Markup.inlineKeyboard(messageForStart(ctx)))
+      await ctx.reply('start', Markup.inlineKeyboard(messageForStart(ctx)))
+    } catch (err) {
+      console.log(err)
+    }
   })
   bot.action(/start/, async (ctx) => {
-    if (ctx.has(callbackQuery('data'))) {
-      const words = ctx.update.callback_query.data.split(/[ ]+/)
-      const wordAction = words[1]
-      if (wordAction === 'changeNotice') {
-        await User.updateOne(
-          { login: ctx.session.user.login },
-          { notice: !ctx.session.user.notice }
-        )
-        ctx.session.user.notice = !ctx.session.user.notice
-        const userInCashRow = await redisClient.get(ctx.session.user.login)
-        if (userInCashRow) {
-          const UserInCash: IUser = JSON.parse(userInCashRow)
-          UserInCash.notice = !UserInCash.notice
-          await redisClient.set(
-            ctx.session.user.login,
-            JSON.stringify(UserInCash)
+    try {
+      if (ctx.has(callbackQuery('data'))) {
+        const words = ctx.update.callback_query.data.split(/[ ]+/)
+        const wordAction = words[1]
+        if (wordAction === 'changeNotice') {
+          await User.updateOne(
+            { login: ctx.session.user.login },
+            { notice: !ctx.session.user.notice }
           )
+          ctx.session.user.notice = !ctx.session.user.notice
+          const userInCashRow = await redisClient.get(ctx.session.user.login)
+          if (userInCashRow) {
+            const UserInCash: IUser = JSON.parse(userInCashRow)
+            UserInCash.notice = !UserInCash.notice
+            await redisClient.set(
+              ctx.session.user.login,
+              JSON.stringify(UserInCash)
+            )
+          }
         }
       }
-    }
-    const text = `start`
+      const text = `start`
 
-    await ctx.editMessageText(text, {
-      reply_markup: { inline_keyboard: messageForStart(ctx) },
-    })
+      await ctx.editMessageText(text, {
+        reply_markup: { inline_keyboard: messageForStart(ctx) },
+      })
+    } catch (err) {
+      console.log(err)
+    }
   })
 }
